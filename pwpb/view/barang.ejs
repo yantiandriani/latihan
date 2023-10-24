@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>market</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Market</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Pricing</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#">Disabled</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+    <div class="container mt-3">
+        <!-- Button trigger modal -->
+        <% if(user) { %>
+            <% if(user.role==){ %> {
+                <%= user.saldo %>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Tambah Data
+                </button>
+            }
+            <% } %>
+    <a href="/transaksi"><i class="fa-light fa-cart-shopping" style="color: #775eba;"></i>></i></a>
+    <a href="/shop/<%= id %>">
+        <i class="fa-solid fa-shop" style="color: #4a6ca5;"></i></a>
+    </a>
+    <% } %>
+    
+        <!-- tabel -->
+        <div class="row">
+        <div class="col-md-6">
+        <table border="1" class="table table-dark table-striped">
+                <tr>
+                    <th>Id</th>
+                    <th>nama barang</th>
+                    <th>stock barang</th>
+                    <th>harga barang</th>
+                    <th>Beli</th>
+                    <th>Action</th>
+                    <th>Hapus</th>
+                </tr>
+                <% for(let a of produk){ %>
+                    <tr>
+                        <td>
+                            <%= a.id_barang %>
+                        </td>
+                        <td>
+                            <%= a.Nama_Barang %>
+                        </td>
+                        <td>
+                            <%= a.stock %>
+                        </td>
+                        <td>
+                            <%= uang(a.harga) %>
+                        </td>
+                        <td>
+                            <%= a.new_stock %>
+                        </td>
+
+                        <td>
+                            <% if(a.new_stock <= 0){ %>
+                                <div style="color: red">stock habis</div>
+                            <% }else{  %> 
+
+                            <!-- Button trigger modal -->
+                            <button type="button" class="badge bg-success" data-bs-toggle="modal"
+                                onclick="barang('<%= a.id_barang %>','<%= a.harga %>', '<%= a.new_stock %>')" data-bs-target="#modalBarang">
+                                pilih
+                            </button>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if{user}{ %>
+                                <% if{user.role==1}{ %>
+                            <a href="/hapusBar/<%= a.id_barang %>" onclick="return confirm('Yakin delete ?')"
+                                class="badge bg-danger">Hapus</a>   
+                                <% } %>
+                                <% } %>
+                        </td>
+                    </tr>
+                    <% } %>
+            </table>
+        </div>
+    <!-- Tabel End -->
+    <!-- Tabel2 -->
+    <div class="col-md-6" >
+        Saldo Anda : <div id="saldo"></div>
+        <table border="1" class="table table-dark table-striped">
+                <tr>
+                    <th>Id</th>
+                    <th>nama barang</th>
+                    <th>Jumlah</th>
+                    <th>Total Harga</th>
+                    <th>Bayar</th>
+                    <th>Cancel</th>
+                    <th>Hapus</th>
+                </tr>
+                <% for(let a of transaksi){ %>
+                    <tr>
+                        <td>
+                            <%= a.id_transaksi %>
+                        </td>
+                        <td>
+                            <%= a.Nama_Barang %>
+                        </td>
+                        <td>
+                            <%= a.jumlah %>
+                        </td>
+                        <td>
+                            <%= a.total_harga %>
+                        </td>
+                        <td>
+                            <button onclick="bayar('<%= a.total_harga %>')">Bayar</button>
+                        </td>
+                        <td>
+                            <button type="button" class=" badge bg-danger" data data-bs-toggle="modal" onclick="cancel('<%= a.new_stock%>', '<%= a.jumlah%>', '<%=a.id_barang %>', '<%=a.id_transaksi %>')" data-bs-target="#modalCancel">cancel
+                            </button>
+                        </td>
+                        <td>
+                            <a href="/hapusBar/<%= a.id_transaksi %>" onclick="return confirm('Yakin hapus ?')"
+                                class="badge bg-danger">Hapus</a>
+                        </td>
+                    </tr>
+                    <% } %>
+                    <table border="1" class="table table-dark table-striped">
+                        <% for(let a of total){ %>
+                            <tr>
+                                <td>Total</td>
+                                <td colspan="3" >
+                                    <div style="text-align: right;">
+                                        <%= uang(a.total) %>
+                                    </div>
+                                </td>
+                                <td colspan="2">
+                                    <button onclick="ts('<%= a.total %>')">bayar semua</button>
+                                </td>
+                            </tr>
+                            <% } %>
+                        </table>
+                        
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Tabel 2 End -->
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Masukan data</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/tambahBarang" method="post">
+                            Nama barang
+                        <input type="text" name="id_JenisBarang" hidden value= "<%= id %>" id="id_JenisBarang">
+                     Barang
+                        <input type="text" id="NamaBarang" class="form-control" name="NamaBarang"
+                        onchange="validasi_modal1()" required>
+                      harga
+                        <input type="number" id="harga" class="form-control" name="harga" onchange="validasi_modal1()"
+                        required>
+                        stock
+                        <input type="number" id="stock" class="form-control" name="stock" required>
+                        <label for="formFile" class="form-label">Default file input example</label>
+                        <input class="form-control" type="file" name="Photo" id="formFile">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batalkan</button>
+                    <button type="submit" class="btn btn-primary" id="save">simpan</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
+
+    <!-- modal 2 -->
+    <div class="modal fade" id="modalBarang" tabindex="-1" aria-labelledby="modalBarang" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalBarang">Masukan data</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/tambahTransaksi" method="post">
+                        <input type="text"  id="barang_id" name="barang_id">
+                        <input type="text"  id="hargabarang" name="hargabarang">
+                        <input type="text"  id="stock1" name="stock1">
+                        <input type="text"  id="total" name="total">
+                        <input type="text"  id="new_Stock" name="new_Stock">
+                        <label for="jumlah">Masukan Jumlah Barang</label>
+                        <input type="text" class="form-control" name="jumlah" id="jumlah" onchange="total_harga()">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tidak</button>
+                    <button type="submit" class="btn btn-primary">Tambahkan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- modal 3 -->
+<div class="modal fade" id="modalCancel" tabindex="-1" aria-labelledby="modalCancelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalCancelLabel">Masukan data</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                    <form action="/cancelTransaksi" method="post">
+                        <input type="text"  id="id_transaksi" name="id_transaksi">
+                        <input type="text"  id="barang_id2" name="barang_id2">
+                        <input type="text"  id="stockBaru" name="stockBaru">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+                    <button type="submit" class="btn btn-danger">Batalkan</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+</body>
+<%- include('modal.ejs')  %>
+<script src="/pwpb/public/script.js"></script>
+
+</html>
